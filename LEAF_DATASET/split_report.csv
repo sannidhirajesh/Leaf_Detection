@@ -1,0 +1,31 @@
+class,total,train,validation,test,train_percent,validation_percent,test_percent
+Alpinia Galanga (Rasna),50,30,10,10,60.0,20.0,20.0
+Amaranthus Viridis (Arive-Dantu),122,73,24,25,59.84,19.67,20.49
+Artocarpus Heterophyllus (Jackfruit),56,34,11,11,60.71,19.64,19.64
+Azadirachta Indica (Neem),60,36,12,12,60.0,20.0,20.0
+Basella Alba (Basale),103,62,21,20,60.19,20.39,19.42
+Brassica Juncea (Indian Mustard),34,20,7,7,58.82,20.59,20.59
+Carissa Carandas (Karanda),74,44,15,15,59.46,20.27,20.27
+Citrus Limon (Lemon),57,34,11,12,59.65,19.3,21.05
+Ficus Auriculata (Roxburgh fig),50,30,10,10,60.0,20.0,20.0
+Ficus Religiosa (Peepal Tree),63,38,13,12,60.32,20.63,19.05
+Hibiscus Rosa-sinensis,43,26,9,8,60.47,20.93,18.6
+Jasminum (Jasmine),71,43,14,14,60.56,19.72,19.72
+Mangifera Indica (Mango),62,37,12,13,59.68,19.35,20.97
+Mentha (Mint),97,58,19,20,59.79,19.59,20.62
+Moringa Oleifera (Drumstick),77,46,15,16,59.74,19.48,20.78
+Muntingia Calabura (Jamaica Cherry-Gasagase),56,34,11,11,60.71,19.64,19.64
+Murraya Koenigii (Curry),60,36,12,12,60.0,20.0,20.0
+Nerium Oleander (Oleander),62,37,12,13,59.68,19.35,20.97
+Nyctanthes Arbor-tristis (Parijata),40,24,8,8,60.0,20.0,20.0
+Ocimum Tenuiflorum (Tulsi),52,31,10,11,59.62,19.23,21.15
+Piper Betle (Betel),48,29,10,9,60.42,20.83,18.75
+Plectranthus Amboinicus (Mexican Mint),48,29,10,9,60.42,20.83,18.75
+Pongamia Pinnata (Indian Beech),61,37,12,12,60.66,19.67,19.67
+Psidium Guajava (Guava),65,39,13,13,60.0,20.0,20.0
+Punica Granatum (Pomegranate),79,47,16,16,59.49,20.25,20.25
+Santalum Album (Sandalwood),58,35,12,11,60.34,20.69,18.97
+Syzygium Cumini (Jamun),39,23,8,8,58.97,20.51,20.51
+Syzygium Jambos (Rose Apple),56,34,11,11,60.71,19.64,19.64
+Tabernaemontana Divaricata (Crape Jasmine),56,34,11,11,60.71,19.64,19.64
+Trigonella Foenum-graecum (Fenugreek),36,22,7,7,61.11,19.44,19.44

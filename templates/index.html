@@ -1,0 +1,1158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080e0b">
+    <meta name="description" content="AI-powered leaf image classification using deep learning.">
+    <title>LEAF.AI | Intelligent Leaf Classification</title>
+
+    <style>
+        :root {
+            --bg: #080e0b;
+            --panel: #101a14;
+            --panel2: #142219;
+            --green: #b8f36a;
+            --green-dark: #85bf48;
+            --white: #f3f7f0;
+            --muted: #91a092;
+            --border: rgba(195, 239, 172, 0.14);
+            --danger: #ffaaa8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse at 85% 5%, #203b27 0, transparent 35%),
+                radial-gradient(ellipse at 0% 60%, #14271b 0, transparent 35%),
+                var(--bg);
+            color: var(--white);
+            font-family: "Segoe UI", Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button:focus-visible,
+        input:focus-visible,
+        .drop-zone:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 4px;
+        }
+
+        .background-pattern {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.12;
+            z-index: 0;
+            background-image:
+                radial-gradient(var(--green) 0.7px, transparent 0.7px);
+            background-size: 30px 30px;
+            mask-image: linear-gradient(to bottom, black, transparent 85%);
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: auto;
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            background: var(--green);
+            color: #14210d;
+            border-radius: 13px;
+            font-size: 24px;
+        }
+
+        .brand-name span {
+            color: var(--green);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px var(--green);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 58px 24px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 55px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+            margin-bottom: 23px;
+        }
+
+        .hero h1 {
+            font-size: clamp(42px, 5.6vw, 72px);
+            line-height: 1.08;
+            letter-spacing: -3px;
+            font-weight: 800;
+            margin-bottom: 23px;
+        }
+
+        .accent {
+            color: var(--green);
+        }
+
+        .hero-description {
+            max-width: 470px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .hero-visual {
+            min-height: 335px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .orb {
+            width: 270px;
+            max-width: 65vw;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 35% 30%, #345d37, #172b1d 53%, #0d1811 75%);
+            border: 1px solid rgba(184, 243, 106, 0.2);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 90px #8dc94c12, inset 0 0 55px #a5e95b0b;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .leaf-art {
+            font-size: 120px;
+            filter: drop-shadow(0 10px 25px #a2e65c2b);
+            transform: rotate(-18deg);
+        }
+
+        .orbit {
+            position: absolute;
+            width: 340px;
+            max-width: 85vw;
+            aspect-ratio: 1;
+            border: 1px solid #b8f36a1a;
+            border-radius: 50%;
+            animation: spin 28s linear infinite;
+            pointer-events: none;
+        }
+
+        .orbit::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--green);
+            top: 40px;
+            left: 40px;
+            border-radius: 50%;
+            box-shadow: 0 0 18px var(--green);
+        }
+
+        .float-card {
+            position: absolute;
+            background: rgba(20, 34, 25, 0.96);
+            border: 1px solid var(--border);
+            padding: 13px 15px;
+            border-radius: 13px;
+            box-shadow: 0 15px 40px #0003;
+            font-size: 11px;
+            color: var(--muted);
+            z-index: 1;
+        }
+
+        .float-card strong {
+            display: block;
+            color: var(--green);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .float-card.one {
+            left: 0;
+            top: 43px;
+        }
+
+        .float-card.two {
+            right: 0;
+            bottom: 40px;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .section-heading h2 {
+            font-size: 25px;
+            letter-spacing: -0.6px;
+            margin-bottom: 7px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .step-label {
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 0.9fr;
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        .panel {
+            min-width: 0;
+            padding: 26px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: linear-gradient(145deg, #142019, #0e1711);
+        }
+
+        .panel-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .panel-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+            margin-bottom: 22px;
+        }
+
+        .drop-zone {
+            min-height: 235px;
+            padding: 20px;
+            border: 1px dashed #63834c;
+            border-radius: 17px;
+            background: #b8f36a05;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            background: #b8f36a0c;
+            border-color: var(--green);
+        }
+
+        .upload-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            background: #b8f36a14;
+            color: var(--green);
+            font-size: 27px;
+            margin-bottom: 16px;
+        }
+
+        .drop-zone strong {
+            font-size: 14px;
+            margin-bottom: 9px;
+        }
+
+        .drop-zone p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .browse {
+            color: var(--green);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        #leaf_image {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #preview {
+            display: none;
+            max-width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 13px;
+        }
+
+        .file-name {
+            max-width: 100%;
+            margin-top: 12px;
+            color: var(--green);
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .file-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 15px;
+        }
+
+        .file-types span {
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 9px;
+            font-size: 10px;
+            border-radius: 7px;
+        }
+
+        .predict-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: var(--green);
+            color: #14200d;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .predict-btn:hover:not(:disabled) {
+            background: #d0ff91;
+            transform: translateY(-1px);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            color: var(--white);
+            border-color: var(--green);
+        }
+
+        .result-empty {
+            min-height: 315px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .result-symbol {
+            width: 75px;
+            height: 75px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            background: #b8f36a08;
+            border-radius: 23px;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .result-empty h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .result-empty p {
+            max-width: 260px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .result-image {
+            display: block;
+            width: 100%;
+            height: 185px;
+            object-fit: contain;
+            background: #080e0b;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            margin-bottom: 21px;
+        }
+
+        .result-kicker {
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .predicted-name {
+            font-size: 25px;
+            font-weight: 800;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+            margin-bottom: 22px;
+        }
+
+        .confidence-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .confidence-head strong {
+            color: var(--green);
+        }
+
+        .progress {
+            height: 7px;
+            border-radius: 20px;
+            background: #29352b;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #78b842, #c7ff80);
+            transition: width 0.8s ease;
+        }
+
+        .top-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 1px;
+            margin: 25px 0 10px;
+        }
+
+        .prediction-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+
+        .prediction-row:last-child {
+            border-bottom: 0;
+        }
+
+        .prediction-name {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .rank {
+            color: var(--green);
+            margin-right: 8px;
+        }
+
+        .score {
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .error {
+            padding: 13px 15px;
+            margin-bottom: 17px;
+            border: 1px solid #a34d4d66;
+            border-radius: 12px;
+            background: #a34d4d15;
+            color: var(--danger);
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .notice {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            margin-top: 22px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .notice-icon {
+            color: var(--green);
+            font-size: 16px;
+        }
+
+        .notice strong {
+            color: var(--white);
+        }
+
+        footer {
+            max-width: 1200px;
+            margin: 15px auto 0;
+            padding: 23px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            color: #738174;
+            font-size: 11px;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer strong {
+            color: var(--green);
+            letter-spacing: 1px;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 800px) {
+            main {
+                padding-top: 38px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .hero-visual {
+                min-height: 300px;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-description {
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 17px;
+            }
+
+            .brand {
+                font-size: 17px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .system-status {
+                max-width: 130px;
+                font-size: 9px;
+                line-height: 1.5;
+            }
+
+            main {
+                padding: 32px 15px;
+            }
+
+            .hero h1 {
+                font-size: 43px;
+                letter-spacing: -1.8px;
+            }
+
+            .hero {
+                margin-bottom: 35px;
+            }
+
+            .hero-visual {
+                min-height: 270px;
+            }
+
+            .orb {
+                width: 220px;
+            }
+
+            .leaf-art {
+                font-size: 100px;
+            }
+
+            .orbit {
+                width: 275px;
+            }
+
+            .float-card {
+                padding: 10px;
+                font-size: 9px;
+            }
+
+            .float-card strong {
+                font-size: 11px;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+            .section-heading {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .predicted-name {
+                font-size: 22px;
+            }
+
+            footer {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-pattern" aria-hidden="true"></div>
+
+    <header class="navbar">
+        <a href="/" class="brand"
+           style="text-decoration:none;color:inherit;">
+            <div class="brand-icon" aria-hidden="true">✳</div>
+            <div class="brand-name">LEAF<span>.AI</span></div>
+        </a>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            AI Classification System
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <div class="eyebrow">
+                    <span aria-hidden="true">✦</span>
+                    Intelligent image recognition
+                </div>
+
+                <h1>
+                    Every leaf has a
+                    <span class="accent">story.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Explore the world of leaves through artificial
+                    intelligence. Upload a leaf image and let our
+                    deep learning model predict its most likely class.
+                </p>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+                <div class="orbit"></div>
+
+                <div class="orb">
+                    <div class="leaf-art">🌿</div>
+                </div>
+
+                <div class="float-card one">
+                    IMAGE ANALYSIS
+                    <strong>Deep Learning</strong>
+                </div>
+
+                <div class="float-card two">
+                    MODEL ARCHITECTURE
+                    <strong>MobileNetV2 + RNN</strong>
+                </div>
+            </div>
+        </section>
+
+        <section id="classifier">
+            <div class="section-heading">
+                <div>
+                    <h2>Leaf recognition studio</h2>
+                    <p>Upload an image to start classification.</p>
+                </div>
+
+                <div class="step-label">01 — ANALYZE</div>
+            </div>
+
+            <div class="workspace">
+                <!-- Image upload panel -->
+                <section class="panel">
+                    <div class="panel-title">Upload leaf image</div>
+
+                    <p class="panel-subtitle">
+                        Choose a clear image with the leaf visible.
+                        For best results, avoid blurry images.
+                    </p>
+
+                    {% if error %}
+                    <div class="error" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <form id="upload-form"
+                          method="POST"
+                          enctype="multipart/form-data">
+
+                        <input
+                            id="leaf_image"
+                            type="file"
+                            name="leaf_image"
+                            accept=".jpg,.jpeg,.png,.webp"
+                            aria-label="Choose a leaf image"
+                            required
+                        >
+
+                        <label class="drop-zone"
+                               id="drop-zone"
+                               for="leaf_image"
+                               tabindex="0">
+
+                            <img
+                                id="preview"
+                                alt="Preview of the selected leaf image"
+                            >
+
+                            <div id="upload-prompt">
+                                <div class="upload-icon"
+                                     aria-hidden="true">↑</div>
+
+                                <strong>Drop your leaf image here</strong>
+
+                                <p>
+                                    or <span class="browse">browse files</span>
+                                    from your device
+                                </p>
+
+                                <p style="margin-top:12px;">
+                                    Clear, well-lit images work best
+                                </p>
+                            </div>
+
+                            <div class="file-name"
+                                 id="file-name"
+                                 aria-live="polite"></div>
+                        </label>
+
+                        <div class="file-types" aria-label="Supported formats">
+                            <span>JPG</span>
+                            <span>JPEG</span>
+                            <span>PNG</span>
+                            <span>WEBP</span>
+                            <span>MAX 10 MB</span>
+                        </div>
+
+                        <button class="predict-btn"
+                                id="predict-btn"
+                                type="submit">
+                            ✦ &nbsp; Analyze Leaf Image
+                        </button>
+
+                        <button class="secondary-btn"
+                                id="reset-btn"
+                                type="button">
+                            Clear selected image
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Prediction result panel -->
+                <section class="panel" aria-live="polite">
+                    <div class="panel-title">Analysis results</div>
+
+                    <p class="panel-subtitle">
+                        Your prediction and confidence score will
+                        appear here.
+                    </p>
+
+                    {% if result %}
+                        <div class="result-kicker">Analysis complete</div>
+
+                        {% if image_url %}
+                        <img
+                            class="result-image"
+                            src="{{ image_url }}"
+                            alt="Uploaded leaf image"
+                        >
+                        {% endif %}
+
+                        <div class="result-kicker">Predicted class</div>
+
+                        <div class="predicted-name">
+                            {{ result.predicted_class }}
+                        </div>
+
+                        <div class="confidence-head">
+                            <span>Model confidence</span>
+                            <strong>
+                                {{ "%.2f"|format(result.confidence) }}%
+                            </strong>
+                        </div>
+
+                        <div class="progress"
+                             role="progressbar"
+                             aria-label="Model confidence"
+                             aria-valuemin="0"
+                             aria-valuemax="100"
+                             aria-valuenow="{{ result.confidence }}">
+                            <div
+                                class="progress-fill"
+                                data-confidence="{{ result.confidence }}"
+                            ></div>
+                        </div>
+
+                        <div class="top-title">TOP PREDICTIONS</div>
+
+                        {% for item in result.top_predictions %}
+                        <div class="prediction-row">
+                            <span class="prediction-name">
+                                <span class="rank">#{{ loop.index }}</span>
+                                {{ item.name }}
+                            </span>
+
+                            <span class="score">
+                                {{ "%.2f"|format(item.confidence) }}%
+                            </span>
+                        </div>
+                        {% endfor %}
+
+                    {% else %}
+                        <div class="result-empty">
+                            <div class="result-symbol"
+                                 aria-hidden="true">⌁</div>
+
+                            <h3>Waiting for your leaf</h3>
+
+                            <p>
+                                Upload an image to see the predicted
+                                class, confidence score, and top
+                                three model predictions.
+                            </p>
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+
+            <div class="notice">
+                <span class="notice-icon" aria-hidden="true">ⓘ</span>
+
+                <p>
+                    <strong>Understanding your result:</strong>
+                    The predicted class and confidence come from
+                    your trained model. Confidence is not a guarantee
+                    of correctness. The model classifies images only
+                    among the classes it learned during training.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>
+            <strong>LEAF.AI</strong>
+            &nbsp; Intelligent Leaf Classification
+        </span>
+
+        <span>
+            Powered by TensorFlow · MobileNetV2 + SimpleRNN
+        </span>
+    </footer>
+
+    <script>
+        "use strict";
+
+        const input = document.getElementById("leaf_image");
+        const dropZone = document.getElementById("drop-zone");
+        const preview = document.getElementById("preview");
+        const uploadPrompt = document.getElementById("upload-prompt");
+        const fileName = document.getElementById("file-name");
+        const form = document.getElementById("upload-form");
+        const submitButton = document.getElementById("predict-btn");
+        const resetButton = document.getElementById("reset-btn");
+
+        const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+        const ALLOWED_TYPES = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        let previewUrl = null;
+
+        function clearPreviewUrl() {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+        }
+
+        function showPreview(file) {
+            if (!file) {
+                return false;
+            }
+
+            if (!ALLOWED_TYPES.includes(file.type)) {
+                alert("Please choose a JPG, PNG, or WEBP image.");
+                input.value = "";
+                return false;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                alert("The image must be smaller than 10 MB.");
+                input.value = "";
+                return false;
+            }
+
+            clearPreviewUrl();
+
+            previewUrl = URL.createObjectURL(file);
+            preview.src = previewUrl;
+            preview.style.display = "block";
+            uploadPrompt.style.display = "none";
+            fileName.textContent = file.name;
+
+            return true;
+        }
+
+        input.addEventListener("change", function () {
+            if (this.files.length > 0) {
+                showPreview(this.files[0]);
+            }
+        });
+
+        ["dragenter", "dragover"].forEach(function (eventName) {
+            dropZone.addEventListener(eventName, function (event) {
+                event.preventDefault();
+                dropZone.classList.add("dragover");
+            });
+        });
+
+        ["dragleave", "drop"].forEach(function (eventName) {
+            dropZone.addEventListener(eventName, function (event) {
+                event.preventDefault();
+                dropZone.classList.remove("dragover");
+            });
+        });
+
+        dropZone.addEventListener("drop", function (event) {
+            const files = event.dataTransfer.files;
+
+            if (!files || files.length === 0) {
+                return;
+            }
+
+            const file = files[0];
+
+            if (!ALLOWED_TYPES.includes(file.type)) {
+                alert("Please choose a JPG, PNG, or WEBP image.");
+                return;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                alert("The image must be smaller than 10 MB.");
+                return;
+            }
+
+            try {
+                const transfer = new DataTransfer();
+                transfer.items.add(file);
+                input.files = transfer.files;
+                showPreview(file);
+            } catch (error) {
+                alert("Please use the file selection button instead.");
+            }
+        });
+
+        dropZone.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                input.click();
+            }
+        });
+
+        resetButton.addEventListener("click", function () {
+            input.value = "";
+            preview.removeAttribute("src");
+            preview.style.display = "none";
+            uploadPrompt.style.display = "block";
+            fileName.textContent = "";
+
+            clearPreviewUrl();
+
+            submitButton.disabled = false;
+            submitButton.textContent = "✦  Analyze Leaf Image";
+        });
+
+        form.addEventListener("submit", function (event) {
+            if (!input.files || input.files.length === 0) {
+                event.preventDefault();
+                alert("Please select a leaf image first.");
+                return;
+            }
+
+            const file = input.files[0];
+
+            if (!ALLOWED_TYPES.includes(file.type) ||
+                file.size > MAX_FILE_SIZE) {
+                event.preventDefault();
+                alert("Please select a supported image smaller than 10 MB.");
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Analyzing leaf...";
+        });
+
+        // Set the confidence bar width through JavaScript,
+        // avoiding Jinja expressions inside CSS.
+        document.querySelectorAll(".progress-fill").forEach(function (bar) {
+            const confidence = Number(bar.dataset.confidence);
+
+            const safeValue = Number.isFinite(confidence)
+                ? Math.max(0, Math.min(100, confidence))
+                : 0;
+
+            bar.style.width = safeValue + "%";
+        });
+    </script>
+</body>
+</html>
+

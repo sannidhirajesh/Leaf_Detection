@@ -1,0 +1,1 @@
+Place your extracted LEAF_DATASET folder beside train.py. The dataset itself is not included in this source ZIP.
